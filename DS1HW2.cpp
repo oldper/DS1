@@ -5,6 +5,7 @@
 # include <cstdlib>
 using namespace std;
 
+// To store the data of each line.
 struct Data {
     int schoolCode; // 0
     string schoolName; // 1
@@ -17,95 +18,17 @@ struct Data {
     int graduateNum; // 8
     string locationName; // 9
     string system; // 10
+    bool putIn;
 };
 
 class File {
    
     public:
-        bool sameSchoolAndDepartment ( vector<Data> data2, int index, int index2 ) {
-            if ( index2 == -1 ) index2++;
-            if ( data2[index2].departmentName == data[index].departmentName && data2[index2].schoolName == data[index].schoolName ) return true;
-            return false;
-        }
 
-        void mission3( string filename1, string filename2, File file2 ) {
-            ofstream file( ("output"+filename1+"_"+filename2+".txt").c_str() );
-            int count = 0;
-            int now1 = 0, now2 = 0;
-            vector<Data> data2 = file2.data;
-            vector<string> lines2 = file2.lines;
-            int size1 = lines.size(), size2 = lines2.size();
-
-            while ( now1 < size1 || now2 < size2 ) {
-                file << lines[now1++] << "\n";
-                cout << "[" << ++count << "]" << lines[now1-1] << endl;
-                
-                while ( sameSchoolAndDepartment(data, now1, now1-1 ) ) {
-                    file << lines[now1++] << "\n";
-                    cout << "[" << ++count << "]" << lines[now1-1] << endl;
-                }
-
-                while ( sameSchoolAndDepartment(data2, now1-1, now2-1) ) {
-                    file << lines2[now2++] << "\n";
-                    cout << "[" << ++count << "] " << lines2[now2-1] << endl;
-                }
-
-                if ( now1 >= size1 ) {
-                    while ( now2 < size2 ) {
-                        file << lines2[now2++] << "\n";
-                        cout << "[" << ++count << "]" << lines2[now2-1] << endl;
-                    }
-                }
-
-                else if ( now2 >= size2 ) {
-                    while ( now1 < size1 ) {
-                        file << lines[now1++] << "\n";
-                        cout << "[" << ++count << "]" << lines[now1-1] << endl;
-                    }
-                }
-                
-                else if ( data[now1].schoolName != data[now1-1].schoolName) {
-                    while ( data2[now2].schoolName == data[now1-1].schoolName ) {
-                        file << lines2[now2++] << "\n";
-                        cout << "[" << ++count << "]" << lines2[now2-1] << endl;
-                    }
-                }
-            }
-
-            cout << "Total: " << count << endl;
-            file.close();
-        }
-
-        int getDepartmentCode( int index ) {
-            return data[index].departmentCode;
-        }
-
-        int getSchoolCode( int index ) {
-            return data[index].schoolCode;
-        }
-        void mission2( string fileName, int minStudentNum, int minGraduateNum ) {
-            ofstream outputFile( ("copy"+fileName+".txt").c_str() );
-            int now = 0, num = 0;
-            int size = lines.size();
-            while ( now < size ) {
-                if ( data[now].studentNum >= minStudentNum && data[now].graduateNum >= minGraduateNum ) {
-                    outputFile << lines[now] << "\n";
-                    cout << "[" << ++num << "] " << lines[now] << endl;
-                }
-
-                now++;
-            }
-
-            cout << "Total number( Student number bigger than " << minStudentNum << " and  graduate number bigger than " << minGraduateNum << " ): " << num << endl;
-            
-            outputFile.close();
-        }
-
-        void BuildAll( string fileName ) {
-            inputLines( fileName.c_str() );
-            buildDatabase();
-        }
-
+        /*
+            This function is to input useful lines in vector "lines".
+            fileName.substr(0,5) is to filter the first to third line of the original file out.
+        */
         void inputLines( string fileName ) { 
             ifstream inputFile(fileName.c_str());
             string line;
@@ -122,28 +45,7 @@ class File {
             inputFile.close();
         }
 
-        void mission1( string fileName) {
-            ofstream outputFile( ("copy"+fileName+".txt").c_str() );
-            int num = 0;
-            int size = lines.size();
-            for ( int i = 0 ; i < size ; i++ ) {
-                outputFile << lines[i] << "\n";
-                cout << "[" << ++num << "] " << lines[i] << endl;
-            }
-
-            cout << "Total " << num << endl;
-            outputFile.close();
-        }
-
-        void buildDatabase() {
-            int now = 0, size = lines.size();
-            while ( now < size ) {
-                buildOne( now );
-                now++;
-            }
-        }
-
-
+        // build the data by the string.
         void buildOne( int stringIndex ) {
             int now = 0, length = lines[stringIndex].size();
             int flag = 0, head = 0;
@@ -161,6 +63,7 @@ class File {
             }
         }
 
+        // use flag to make data to go to where they should be. If the data is null aka head == tail, the function will give it a value. 
         void insertData( int stringIndex, int head, int tail, int flag ) {
             if ( head == tail ) { // the data is null
                 if( flag == 0 ) {
@@ -226,6 +129,26 @@ class File {
             }
         }
 
+        // use buildOne to build vector data( aka database )
+        void buildDatabase() {
+            int now = 0, size = lines.size();
+            while ( now < size ) {
+                buildOne( now );
+                now++;
+            }
+        }
+
+        // inputLine and build database
+        void BuildAll( string fileName ) {
+            inputLines( fileName.c_str() );
+            buildDatabase();
+        }
+
+
+        /* 
+            Because that if the number is bigger than or equal to 1000, it will have some characters that not a number.
+            And that will make stoi can't use. So I program the function to deal with that.
+        */
         int toNum(string str) {
             int len = str.size();
             string restr;
@@ -239,13 +162,137 @@ class File {
         }
 
 
+        /*
+            Because of the pre-process, the function will just output the string.
+        */
+        void mission1( string fileName) {
+            ofstream outputFile( ("copy"+fileName+".txt").c_str() );
+            int num = 0;
+            int size = lines.size();
+            for ( int i = 0 ; i < size ; i++ ) {
+                outputFile << lines[i] << "\n";
+                cout << "[" << ++num << "] " << lines[i] << endl;
+            }
+
+            cout << "Total " << num << endl;
+            outputFile.close();
+        }
+
+        /*
+            Because of the pre-process, the function is really easy that I don't need to explain.
+        */
+        void mission2( string fileName, int minStudentNum, int minGraduateNum ) {
+            ofstream outputFile( ("copy"+fileName+".txt").c_str() );
+            int now = 0, num = 0;
+            int size = lines.size();
+            while ( now < size ) {
+                if ( data[now].studentNum >= minStudentNum && data[now].graduateNum >= minGraduateNum ) {
+                    outputFile << lines[now] << "\n";
+                    cout << "[" << ++num << "] " << lines[now] << endl;
+                }
+
+                now++;
+            }
+
+            cout << "Total number( Student number bigger than " << minStudentNum << " and  graduate number bigger than " << minGraduateNum << " ): " << num << endl;
+            
+            outputFile.close();
+        }
+        /*
+            I think this is the easiest way to do the task. putIn means that is the data be put in or not.
+            In the other word, putIn is to prevent the data from repeat. And "flag" is to prevent that same 
+            department but be apart by another department. If there isn't the "flag", the department will be 
+            output together. 
+
+            First, the function will output the first data. And it will find the same and continuous department and school 
+            in first file. Then it will find the same and continuous department and school in second file. This is what it do.
+            And there are two special case. First is that now and now-1 present another school. If this happen, the function will
+            output all data that has the same schoolName with now-1. The second case is that first data's amount is bigger than second's.
+            In this case, the function will output all the data that have not been output in the second file.
+        */
+        void mission3( string filename1, string filename2, File file2 ) {
+            ofstream file( ("output"+filename1+"_"+filename2+".txt").c_str() );
+            int count = 0;
+            int now1 = 0;
+            vector<Data> data2 = file2.data;
+            vector<string> lines2 = file2.lines;
+            int size1 = lines.size(), size2 = lines2.size();
+            for ( int i = 0 ; i < size2 ; i++ ) {
+                data2[i].putIn = false;
+            }
+            for ( int i = 0 ; i < size1 ; i++ ) {
+                data[i].putIn = false;
+            }
+
+            while ( now1 < size1 ) {
+                if ( data[now1].putIn == false ) {
+                    file << lines[now1++] << "\n";
+                    cout << "[" << ++count << "]" << lines[now1-1] << endl;
+                    data[now1-1].putIn = true;
+                }
+                else now1++;
+
+                if ( now1 < size1) {
+                    int flag = 0;
+                    for ( int i = 0 ; i < size1 ; i++ ) {
+                        if ( data[i].departmentName == data[now1-1].departmentName && data[i].schoolName == data[now1-1].schoolName && data[i].putIn == false) {
+                            file << lines[i] << "\n";
+                            cout << "[" << ++count << "]" << lines[i] << endl;
+                            data[i].putIn = true;
+                        
+                        }
+
+                        if ( data[i].departmentName == data[now1-1].departmentName && data[i].schoolName == data[now1-1].schoolName ) flag++;
+                        if ( flag && ( data[i].departmentName != data[now1-1].departmentName || data[i].schoolName != data[now1-1].schoolName ) ) break;
+                    }
+
+                    flag = 0;
+                    for ( int i = 0 ; i < size2 ; i++ ) {
+                        if ( data[now1-1].departmentName == data2[i].departmentName && data[now1-1].schoolName == data2[i].schoolName && data2[i].putIn == false) {
+                            file << lines2[i] << "\n";
+                            cout << "[" << ++count << "]" << lines2[i] << endl;
+                            data2[i].putIn = true;
+                            
+                        }
+                        if ( data[now1-1].departmentName == data2[i].departmentName && data[now1-1].schoolName == data2[i].schoolName ) flag++;
+                        if ( flag && ( data[now1-1].departmentName != data2[i].departmentName || data[now1-1].schoolName != data2[i].schoolName) ) break;
+                    }
+                
+                    if ( data[now1].schoolName != data[now1-1].schoolName ) {
+                        for ( int i = 0 ; i < size2 ; i++ ) {
+                            if ( data2[i].schoolName == data[now1-1].schoolName && data2[i].putIn == false ) {
+                                file << lines2[i] << "\n";
+                                cout << "[" << ++count << "]" << lines2[i] << endl;
+                                data2[i].putIn = true;
+                            }
+                        }
+                    }
+                }
+
+                if ( now1 >= size1 ) {
+                    for ( int i = 0 ; i < size2 ; i++ ) {
+                        if ( data2[i].putIn == false) {
+                            file << lines2[i] << "\n";
+                            cout << "[" << ++count << "]" << lines2[i] << endl;
+                            data2[i].putIn = true;
+                        }
+                    }
+                }
+
+            }
+
+            cout << "Total: " << count << endl;
+            file.close();
+        }
+
+
     public:
         vector<string> lines;
         vector<Data> data;
  
 };
 
-
+// make sure that user enter number.
 int getNum() { 
     string str;
     int flag = 0;
@@ -268,7 +315,10 @@ int getNum() {
     cout << endl;
     return stoi( str );
 }
-
+// to ensure the file is exist. missionType1 and 2 just mean copy or input
+// return 1 means the user only enter the number like 201.
+// return 2 means the user enter the whole file name.
+// return 0 means the file does exist.
 int isFileExist( string fileName, int missionType ) {
     if ( missionType == 1 ) {
         ifstream f( ( "input" + fileName +".txt" ).c_str() );
@@ -342,7 +392,7 @@ int main() {
                 cin >> minStudentNum;
                 cout << "Input minGraduateNum ";
                 cin >> minGraduateNum; 
-                file.BuildAll( "copy" + fileName + ".txt" );
+                file.BuildAll( "copy" + fileName + ".txt" );i
                 file.mission2(fileName, minStudentNum, minGraduateNum );
             }
 
@@ -363,7 +413,6 @@ int main() {
                 cout << "(first) Input the num of file. We only use the copy file \"0\" quit.( your file name must be like copy201.txt => 201 ): ";
                 cin >> fileName;
             } while ( !isFileExist(fileName, 2) && fileName.c_str() != "0" );
-            cout << atoi(fileName.c_str()) << endl;
             string fileName2;
             do {
                 cout << "(second) Input the num of file. We only use the copy file \"0\" quit.( your file name must be like copy201.txt => 201 ): ";
