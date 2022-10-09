@@ -1,4 +1,4 @@
- # include <iostream>
+# include <iostream>
 # include <fstream>
 # include <string>
 # include <vector>
@@ -37,41 +37,42 @@ class File {
             int size1 = lines.size(), size2 = lines2.size();
 
             while ( now1 < size1 || now2 < size2 ) {
-                file << lines[now1++];
+                file << lines[now1++] << "\n";
                 cout << "[" << ++count << "]" << lines[now1-1] << endl;
                 
                 while ( sameSchoolAndDepartment(data, now1, now1-1 ) ) {
-                    file << lines[now1++];
+                    file << lines[now1++] << "\n";
                     cout << "[" << ++count << "]" << lines[now1-1] << endl;
                 }
 
                 while ( sameSchoolAndDepartment(data2, now1-1, now2-1) ) {
-                    file << lines2[now2++];
+                    file << lines2[now2++] << "\n";
                     cout << "[" << ++count << "] " << lines2[now2-1] << endl;
                 }
 
                 if ( now1 >= size1 ) {
                     while ( now2 < size2 ) {
-                        file << lines2[now2++];
+                        file << lines2[now2++] << "\n";
                         cout << "[" << ++count << "]" << lines2[now2-1] << endl;
                     }
                 }
 
                 else if ( now2 >= size2 ) {
                     while ( now1 < size1 ) {
-                        file << lines[now1++];
+                        file << lines[now1++] << "\n";
                         cout << "[" << ++count << "]" << lines[now1-1] << endl;
                     }
                 }
                 
                 else if ( data[now1].schoolName != data[now1-1].schoolName) {
                     while ( data2[now2].schoolName == data[now1-1].schoolName ) {
-                        file << lines2[now2++];
+                        file << lines2[now2++] << "\n";
                         cout << "[" << ++count << "]" << lines2[now2-1] << endl;
                     }
                 }
             }
 
+            cout << "Total: " << count << endl;
             file.close();
         }
 
@@ -95,7 +96,7 @@ class File {
                 now++;
             }
 
-            cout << "Total number( Student number bigger than " << minStudentNum << "and  graduate number bigger than " << minGraduateNum << " ): " << num << endl;
+            cout << "Total number( Student number bigger than " << minStudentNum << " and  graduate number bigger than " << minGraduateNum << " ): " << num << endl;
             
             outputFile.close();
         }
@@ -268,32 +269,62 @@ int getNum() {
     return stoi( str );
 }
 
-bool isFileExist( string fileName ) {
-    ifstream f( fileName.c_str() );
-    return f.good();
+int isFileExist( string fileName, int missionType ) {
+    if ( missionType == 1 ) {
+        ifstream f( ( "input" + fileName +".txt" ).c_str() );
+        if ( f.good() ) return 1;
+        if ( fileName.substr( 0, 5) == "input"  ) {
+            ifstream isf( fileName.c_str());
+            if ( isf.good() ) return 2;
+        }
+        else return 0;
+    }
+
+    else if ( missionType == 2 ) {
+        ifstream f( ("copy"+fileName+".txt").c_str());
+        if ( f.good() ) return 1;
+        if ( fileName.substr( 0, 4 ) == "copy" ) {
+            ifstream ifs( fileName.c_str() );
+            if ( ifs.good()) return 2;
+        }
+
+        else return 0;
+    }
+
+    return 0;
 }
 
 int main() {
-    int cmd = 1;
+    int cmd = 1, flag;
     while ( cmd != 0 ) {
         cout << "-------------------------------" << endl;
         cout << "1. copy txt" << endl;
         cout << "2. filter" << endl;
         cout << "3. combine a and b" << endl;
-        cout << "0.quit" << endl;
+        cout << "0. quit" << endl;
         cout << "-------------------------------" << endl;
         cmd = getNum();
         string fileName;
         if ( cmd == 1 ) {
             do {
-                cout << "Input the num of file \"0\" quit( your file name must be like input201.txt => 201 ):  0";
+                cout << "Input the num of file \"0\" quit( your file name must be like input201.txt, you can input 201 or input201.txt ):  ";
                 cin >> fileName;
-            } while ( !isFileExist("input"+fileName+".txt") && atoi(fileName.c_str()) != 0 );
+            } while ( !isFileExist(fileName, 1) && fileName != "0" );
             
-            if ( atoi(fileName.c_str()) != 0) {
+            flag = isFileExist(fileName, 1);
+
+            if ( flag == 1 ) {
+                
                 File file;
                 file.BuildAll( "input"+fileName+".txt" );
                 file.mission1( fileName );
+                
+            }
+            
+            else if ( flag == 2 ) {
+                File file;
+                file.BuildAll( fileName );
+                file.mission1( fileName.substr(5, 3) );
             }
         }
 
@@ -301,8 +332,10 @@ int main() {
             do {
                 cout << "Input the num of file. We only use the copy file \"0\" quit.( your file name must be like copy201.txt => 201 ): ";
                 cin >> fileName;
-            } while ( !isFileExist("copy"+fileName+".txt") && atoi(fileName.c_str()) != 0);
-            if ( atoi(fileName.c_str()) != 0 ) {
+            } while ( !isFileExist(fileName, 2) && fileName != "0");
+
+            flag = isFileExist(fileName, 2 );
+            if ( flag == 1 ) {
                 File file;
                 int minStudentNum, minGraduateNum;
                 cout << "Input minStudentNum ";
@@ -312,26 +345,65 @@ int main() {
                 file.BuildAll( "copy" + fileName + ".txt" );
                 file.mission2(fileName, minStudentNum, minGraduateNum );
             }
+
+            else if ( flag == 2 ) {
+                File file; 
+                int minStudentNum, minGraduateNum;
+                cout << "Input minStudentNum ";
+                cin >> minStudentNum;
+                cout << "Input minGraduateNum ";
+                cin >> minGraduateNum; 
+                file.BuildAll(  fileName );
+                file.mission2(fileName.substr(4,3), minStudentNum, minGraduateNum ); 
+            }
         }
 
         else if ( cmd == 3 ) {
             do {
                 cout << "(first) Input the num of file. We only use the copy file \"0\" quit.( your file name must be like copy201.txt => 201 ): ";
                 cin >> fileName;
-            } while ( !isFileExist("copy"+fileName+".txt") && atoi(fileName.c_str()) != 0);
-
+            } while ( !isFileExist(fileName, 2) && fileName.c_str() != "0" );
+            cout << atoi(fileName.c_str()) << endl;
             string fileName2;
             do {
                 cout << "(second) Input the num of file. We only use the copy file \"0\" quit.( your file name must be like copy201.txt => 201 ): ";
                 cin >> fileName2;
-            } while ( !isFileExist("copy"+fileName2+".txt") && atoi(fileName2.c_str()) != 0 && atoi(fileName.c_str()) != 0);
+            } while ( !isFileExist(fileName2, 2) && fileName2 != "0" && fileName != "0");
 
-            if ( atoi(fileName.c_str()) != 0 && atoi(fileName2.c_str()) != 0 ) {
+            int flag2;
+            flag = isFileExist(fileName, 2);
+            flag2 = isFileExist(fileName2, 2);
+            cout << flag << " " << flag2 << "";
+            if ( flag == 1 && flag2 == 1 ) {
                 File file;
                 file.BuildAll("copy"+fileName+".txt");
                 File file2;
                 file2.BuildAll("copy"+fileName2+".txt");
                 file.mission3(fileName, fileName2, file2);
+            }
+
+            else if ( flag == 1 && flag2 == 2 ) {
+                File file;
+                file.BuildAll( "copy" + fileName + ".txt");
+                File file2;
+                file2.BuildAll( fileName2 );
+                file.mission3(fileName, fileName2.substr(4,3), file2);
+            }
+
+            else if ( flag == 2 && flag2 == 1 ) {
+                File file;
+                file.BuildAll( fileName );
+                File file2;
+                file2.BuildAll("copy"+fileName2+".txt");
+                file.mission3(fileName.substr(4,3), fileName2, file2);
+            }
+
+            else if ( flag == 2 && flag2 == 2 ) {
+                File file;
+                file.BuildAll( fileName );
+                File file2;
+                file2.BuildAll( fileName2 );
+                file.mission3( fileName.substr(4,3), fileName2.substr(4,3), file2);
             }
         }
 
