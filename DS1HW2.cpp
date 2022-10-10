@@ -225,24 +225,26 @@ class File {
             }
 
             while ( now1 < size1 ) {
+                int flag2 = 0;
                 if ( data[now1].putIn == false ) {
                     file << lines[now1++] << "\n";
                     cout << "[" << ++count << "]" << lines[now1-1] << endl;
                     data[now1-1].putIn = true;
                 }
-                else now1++;
+                else {
+                    now1++;
+                    flag2++;
+                } 
 
-                if ( now1 < size1) {
+                if ( now1 < size1 && !flag2 ) {
                     int flag = 0;
                     for ( int i = 0 ; i < size1 ; i++ ) {
                         if ( data[i].departmentName == data[now1-1].departmentName && data[i].schoolName == data[now1-1].schoolName && data[i].putIn == false) {
                             file << lines[i] << "\n";
                             cout << "[" << ++count << "]" << lines[i] << endl;
                             data[i].putIn = true;
-                        
+                            flag++; 
                         }
-
-                        if ( data[i].departmentName == data[now1-1].departmentName && data[i].schoolName == data[now1-1].schoolName ) flag++;
                         if ( flag && ( data[i].departmentName != data[now1-1].departmentName || data[i].schoolName != data[now1-1].schoolName ) ) break;
                     }
 
@@ -252,19 +254,22 @@ class File {
                             file << lines2[i] << "\n";
                             cout << "[" << ++count << "]" << lines2[i] << endl;
                             data2[i].putIn = true;
-                            
+                            flag++;
                         }
-                        if ( data[now1-1].departmentName == data2[i].departmentName && data[now1-1].schoolName == data2[i].schoolName ) flag++;
-                        if ( flag && ( data[now1-1].departmentName != data2[i].departmentName || data[now1-1].schoolName != data2[i].schoolName) ) break;
+
+                        if ( flag && ( data[now1-1].departmentName != data2[i].departmentName || data[now1-1].schoolName != data2[i].schoolName ) && !( data[now1-1].level[0] == '5' ||  data[now1-1].level[0] == '2')) break;
+                        
                     }
                 
-                    if ( data[now1].schoolName != data[now1-1].schoolName ) {
-                        for ( int i = 0 ; i < size2 ; i++ ) {
-                            if ( data2[i].schoolName == data[now1-1].schoolName && data2[i].putIn == false ) {
-                                file << lines2[i] << "\n";
-                                cout << "[" << ++count << "]" << lines2[i] << endl;
-                                data2[i].putIn = true;
-                            }
+
+                }
+
+                if ( data[now1].schoolName != data[now1-1].schoolName ) {
+                    for ( int i = 0 ; i < size2 ; i++ ) {
+                        if ( data2[i].schoolName == data[now1-1].schoolName && data2[i].putIn == false ) {
+                            file << lines2[i] << "\n";
+                            cout << "[" << ++count << "]" << lines2[i] << endl;
+                            data2[i].putIn = true;
                         }
                     }
                 }
@@ -392,7 +397,7 @@ int main() {
                 cin >> minStudentNum;
                 cout << "Input minGraduateNum ";
                 cin >> minGraduateNum; 
-                file.BuildAll( "copy" + fileName + ".txt" );i
+                file.BuildAll( "copy" + fileName + ".txt" );
                 file.mission2(fileName, minStudentNum, minGraduateNum );
             }
 
