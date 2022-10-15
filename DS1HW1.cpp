@@ -9,7 +9,7 @@ typedef struct originalPlace{
     int number;
     int index;
 }  OP; //偷懶用
-
+// a
 
 
 // Just for input 
