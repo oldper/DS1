@@ -1,39 +1,81 @@
 # include <iostream>
 # include <string>
 using namespace std;
-
 class Node {
-	public:
-		string str;
-		Node *next;
-		Node( string strr ) {
-			str = strr;
-			next = NULL;
-		}
+        public:
+                string str="";
+                Node *next;
+                Node( string strr ) {
+                        str = strr;
+                        next = NULL;
+                }
 
-		Node( string strr, Node *nextN ) {
-			str = strr;
-			next = nextN;
-		}
+                Node( string strr, Node *nextN ) {
+                        str = strr;
+                        next = nextN;
+                }
 
 };
 
-class List {
-	private:
-		Node *head;
-		int size = 0;
+class Stack {
 	public:
-		List( string str ) {
-			head = new Node(str);
+		Node *head = NULL;
+		
+		void push( string str ) {
+			if ( head == NULL ) head = new Node( str );
+			else {
+				Node *node = new Node( str, head );
+				head = node;
+			}
+		} // push
+		  //
+		int size() {
+			Node *cur = head;
+			int count = 0;
+			while ( cur != NULL ) {
+				count++;
+				cur = cur->next;
+			}
+
+			return count;
+		} // size
+	
+		bool isEmpty() {
+			return head == NULL;
 		}
 
-		void append( string str ) {
-			Node *cur = head;
-			while ( cur -> next != NULL ) {
-				cur = cur -> next;
+		void pop() {
+			if (head != NULL) {
+				Node *temp = head;
+				head = head->next;
+				delete temp;
 			}
-			size++;
-			cur -> next = new Node(str);
+		} // pop
+		  //
+		string top() {
+			if ( head != NULL ) {
+				return head -> str;
+			} else return "";
+		}
+};
+
+
+
+class List {
+	public:
+		Node *head = NULL;
+
+		void append( string str ) {
+			if ( head == NULL ) {
+				head = new Node(str);
+			} else {
+				Node *cur = head;
+				while ( cur -> next != NULL ) {
+					cur = cur -> next;
+				}
+				cur -> next = new Node(str);
+				
+			}
 		} // append
 		
 
@@ -41,7 +83,6 @@ class List {
 			if ( pos == 0 ) {
 				Node* newHead= new Node(str,head);
 				head = newHead;
-				size++;
 			} else {
 				Node *cur = head, *temp = NULL;
 				for ( int i = 0 ; i < pos ; i++ ) {
@@ -51,7 +92,6 @@ class List {
 
 				Node *putIn = new Node( str, cur );
 				temp -> next = putIn;
-				size++;
 			} // else
 			  //
 			  
@@ -84,6 +124,17 @@ class List {
 				delete cur;
 			} // else
 		} // deleteByPosition
+		  //
+		int size() {
+			int count = 0;
+			Node *cur = head;
+			while ( cur != NULL ) {
+				count++;
+				cur = cur -> next;
+			}
+
+			return count;
+		}
 };// List
  
 
@@ -107,9 +158,9 @@ bool isLegal( char ch ) {
 	return false;
 }
 
-bool cmdCorrect( string str ) {
+bool cmdCorrect( string str , int mode ) {
 	if ( str == "0" || str == "1" ) return true;
-	cout << "Error!!!!!!!" << endl;
+	if ( mode == 1 ) cout << "Error!!!!!!!" << endl;
 	return false;
 } // check if the cmd correct.
 
@@ -120,16 +171,17 @@ string removeSpace( string str ) {
 			str.erase( str.begin() + i );
 			i--;
 		}
+
 	}
 	return str;
 }
 
 int checkError( string str ) {
-	// error1
+	// error
 	int len = str.length();
 	for ( int i = 0 ; i < len ; i++ ) {
 		if ( !isLegal( str[i] )) {
-			cout << str[i] << "is not legal" << endl;
+			cout << str[i] << "Error 1 is not legal" << endl;
 			return 1;
 		}
 	}
@@ -140,13 +192,13 @@ int checkError( string str ) {
 		if ( str[i] == '(' ) count++;
 	       	else if ( str[i] == ')' ) count--;
 		else if ( count < 0 ) {
-			cout << "Extra close parenthesis" << endl;
+			cout << "Error 2 Extra close parenthesis" << endl;
 			return 2;
 		}
 	} 
 
 	if ( count != 0 ) {
-		cout << "Extra open parenthesis" << endl;
+		cout << "Error 2 Extra open parenthesis" << endl;
 		return 2;
 	}
 
@@ -155,54 +207,137 @@ int checkError( string str ) {
 		if ( i == len - 1 ) {
 			if ( !( isDigit(str[i]) || isParenthesis(str[i]) == 2)) {
 				if ( isLegalSig( str[i] )){
-				cout << "one Extra operater" << endl;
+				cout << "Error 3 one Extra operater" << endl;
 				return 3;
 				}
 			}
 		}
-
-		else {
-			if ( isDigit( str[i] ) ){
-				if ( !(isDigit( str[i+1] )|| isLegalSig( str[i+1]) || isParenthesis( str[i+1] )== 2) ) {
-						cout << "not infix" << endl;
-						return 3;
-				}
+	
+		else if ( i == 0 ) {
+			if ( isLegalSig( str[i] ) ) {
+				cout << "Error 3 extra operator" << endl;
+				return 3;
 			}
-
-			else if (  isLegalSig( str[i]) ) {
-				if ( !( isDigit( str[i+1]) || isParenthesis( str[i+1] ) ) ) {
-					cout << "not infix" << endl;
+		}
+		else if ( isDigit( str[i] ) ){
+			if ( !(isDigit( str[i+1] )|| isLegalSig( str[i+1]) || isParenthesis( str[i+1] )== 2) ) {
+					cout << "Error 3 not infix" << endl;
 					return 3;
-				}
 			}
-
-			else if ( isParenthesis( str[i] ) == 1 )  {
-				if ( ! ( isDigit( str[i+1] ) || isParenthesis( str[i+1] == 1 ))) {
-					cout << "not infix" << endl;
-					return 3;
-				}
+		}
+		else if (  isLegalSig( str[i]) ) {
+			if ( !( isDigit( str[i+1]) || isParenthesis( str[i+1] ) ) ) {
+				cout << "Error 3 not infix" << endl;
+				return 3;
 			}
-
-			else if ( isParenthesis( str[i] ) == 2 ) {
-				if ( !( isParenthesis( str[i+1]) || isLegalSig( str[i+1] ) ) ) {
-					cout << "not infix" << endl;
-					return 3;
-				}
+		}
+		else if ( isParenthesis( str[i] ) == 1 )  {
+			if ( ! ( isDigit( str[i+1] ) || isParenthesis( str[i+1] == 1 ))) {
+				cout << "Error 3 not infix" << endl;
+				return 3;
 			}
-
-		} // else
+		}
+		else if ( isParenthesis( str[i] ) == 2 ) {
+			if ( !( isParenthesis( str[i+1]) || isLegalSig( str[i+1] ) ) ) {
+				cout << "Error 3 not infix" << endl;
+				return 3;
+			}
+		}
+		
 	} // for
 
-	  	return 0;
+ 	return 0;
 } // checkerror
+
 
 string readCmd() {
 	string cmd;
 	do {
-		cin >> cmd;
-	} while ( !cmdCorrect( cmd ) );
+		getline(cin,cmd);
+		cmd = removeSpace(cmd);
+	} while ( !cmdCorrect( cmd , 1) );
 	return cmd;
 } // readCMD
+
+List splitToken( string str ) {
+	int length = str.size(), i = 0;
+	List list;
+	while ( i < length ) {
+		if ( isDigit( str[i] ) ) {
+			int head = i;
+			while ( isDigit(str[i])) {
+				i++;
+			}
+			list.append( str.substr(head, i - head) );
+			i--;
+		} // if is digit
+
+		else if ( isLegalSig( str[i] ) ) {
+			list.append( str.substr(i, 1 ));
+		}
+		else if ( isParenthesis( str[i] ) ) {
+			list.append( str.substr(i, 1 ));
+		}
+		else {
+			cout << "error";
+		} 
+
+		i++;
+	}
+
+	return list;
+} // split
+
+List mission2( List list ) {
+	Node* cur = list.head;
+	List reList;
+	Stack stack;
+	while ( cur != NULL ) {
+		if ( isDigit( cur->str[0] ) ) reList.append( cur->str );
+		else if ( isLegalSig( cur->str[0] ) ) {
+			if ( cur->str == "*" || cur->str == "/" ) {
+				stack.push( cur->str );
+			} 
+
+			else if ( cur->str == "+" || cur->str == "-" ) {
+				if ( stack.top()=="*" || stack.top()== "/" ) {
+					while ( !stack.isEmpty() && stack.top() != "(" ) {
+
+						reList.append(stack.head->str );
+						stack.pop();
+					}
+
+					stack.push( cur->str );
+				} // if
+				else {
+					stack.push( cur->str);
+				}
+			}
+		}
+		else if ( isParenthesis( cur->str[0] ) ) {
+			if ( isParenthesis( cur->str[0] ) == 1 ) stack.push(cur -> str);
+			else {
+				while ( stack.top() != "(" ) {
+					reList.append(stack.head->str);
+					stack.pop();
+				}
+
+				stack.pop();
+			}
+		}
+
+		cur = cur -> next;
+	}
+
+
+	while ( !stack.isEmpty() ) {
+		reList.append( stack.top() );
+		stack.pop();
+	}
+
+	return reList;
+}
+		
 
 int main() {
 	cout << "-------------------------------" << endl;
@@ -210,7 +345,6 @@ int main() {
 	cout << "0. quit" << endl;
 	cout << "-------------------------------" << endl;
 	string cmd = readCmd();
-	cin.get();
 
 	while ( cmd != "0" ) { 
 		string str;
@@ -218,11 +352,12 @@ int main() {
 		getline(cin,str);
 		str = removeSpace( str );
 		if ( !checkError( str ) ) {
-		//	toPostfix( str )
-		cout << checkError(str);
-		cout << str;
+ 			List list = splitToken(str);
+			list.printAll();
+			list = mission2( list );
+			list.printAll();
 		}
+		cout << "Enter another cmd" << endl;
 		cmd = readCmd();
-		cin.get();
 	} //while
 } // main()
