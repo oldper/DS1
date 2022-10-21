@@ -338,7 +338,60 @@ List mission2( List list ) {
 	return reList;
 }
 		
+void mission3( List list ) {
+	Stack stack;
+	Node *listCur = list.head;
+	while ( listCur != NULL ) {
+		if ( isDigit( listCur->str[0] ) ) 
+			stack.push( listCur->str );
+		else if ( listCur->str == "+" ) {
+			float a = (float)stoi( stack.top() );
+			stack.pop();
+			float b = (float)stoi( stack.top() );
+			stack.pop();
+			float sum = a + b;
+			stack.push(to_string((int)sum));
+		}
 
+		else if ( listCur->str == "-" ) {
+			float a = (float)stoi( stack.top() );
+                        stack.pop();
+                        float b = (float)stoi( stack.top() );
+                        stack.pop();
+                        float sum = a - b;
+                        stack.push(to_string((int)sum));
+			
+                }
+
+		else if ( listCur->str == "*" ) {
+                        float a = (float)stoi( stack.top() );
+                        stack.pop();
+                        float b = (float)stoi( stack.top() );
+                        stack.pop();
+                        float sum = a * b;
+                        stack.push(to_string((int)sum));
+                }
+
+		else if ( listCur->str == "/" ) {
+                        float a = (float)stoi( stack.top() );
+                        stack.pop();
+                        float b = (float)stoi( stack.top() );
+                        stack.pop();
+			if ( a == 0.0 ) {
+				cout << "Dont divide by ZERO!!!!" << endl;
+				return;
+			}
+			else {
+				int sum = b/a;
+                        	stack.push(to_string((int)sum));
+			}
+                }
+
+		listCur = listCur -> next;
+	}
+
+	cout << "Answer: " << stoi(stack.top() ) << endl;
+}
 int main() {
 	cout << "-------------------------------" << endl;
 	cout << "1. start" << endl;
@@ -356,6 +409,7 @@ int main() {
 			list.printAll();
 			list = mission2( list );
 			list.printAll();
+			mission3( list );
 		}
 		cout << "Enter another cmd" << endl;
 		cmd = readCmd();
