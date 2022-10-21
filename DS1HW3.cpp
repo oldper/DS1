@@ -222,24 +222,28 @@ int checkError( string str ) {
 		else if ( isDigit( str[i] ) ){
 			if ( !(isDigit( str[i+1] )|| isLegalSig( str[i+1]) || isParenthesis( str[i+1] )== 2) ) {
 					cout << "Error 3 not infix" << endl;
+					cout << "a";
 					return 3;
 			}
 		}
 		else if (  isLegalSig( str[i]) ) {
-			if ( !( isDigit( str[i+1]) || isParenthesis( str[i+1] ) ) ) {
+			if ( !( isDigit( str[i+1]) || isParenthesis( str[i+1] )==1 ) ) {
 				cout << "Error 3 not infix" << endl;
+				cout << "b";
 				return 3;
 			}
 		}
 		else if ( isParenthesis( str[i] ) == 1 )  {
-			if ( ! ( isDigit( str[i+1] ) || isParenthesis( str[i+1] == 1 ))) {
+			if ( ! ( isDigit( str[i+1] ) || isParenthesis( str[i+1] ) == 1)) {
 				cout << "Error 3 not infix" << endl;
+				cout << "c";
 				return 3;
 			}
 		}
 		else if ( isParenthesis( str[i] ) == 2 ) {
-			if ( !( isParenthesis( str[i+1]) || isLegalSig( str[i+1] ) ) ) {
+			if ( !( isParenthesis( str[i+1]) == 2|| isLegalSig( str[i+1] ) ) ) {
 				cout << "Error 3 not infix" << endl;
+				cout << "d";
 				return 3;
 			}
 		}
@@ -406,8 +410,8 @@ int main() {
 		str = removeSpace( str );
 		if ( !checkError( str ) ) {
  			List list = splitToken(str);
-			list.printAll();
 			list = mission2( list );
+			cout << "Postfix: " ;
 			list.printAll();
 			mission3( list );
 		}
