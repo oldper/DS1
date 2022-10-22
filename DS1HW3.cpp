@@ -342,9 +342,11 @@ List mission2( List list ) {
 		if ( isDigit( cur->str[0] ) ) reList.append( cur->str );
 		else if ( isLegalSig( cur->str[0] ) ) {
 			if ( cur->str == "*" || cur->str == "/" ) {
-					while (  stack.top() == "*" || stack.top() == "/" ) {
-						reList.append( stack.head->str );
-						stack.pop();
+					if (  stack.top() == "*" || stack.top() == "/" ) {
+						while ( stack.top() != "(" && !stack.isEmpty() ) {
+							reList.append( stack.head->str );
+							stack.pop();
+						}
 					}
 
 					stack.push( cur->str );
@@ -403,7 +405,7 @@ void mission3( List list ) {
                         stack.pop();
                         float b = (float)stoi( stack.top() );
                         stack.pop();
-                        float sum = a - b;
+                        float sum = b-a;
                         stack.push(to_string((int)sum));
 			
                 }
