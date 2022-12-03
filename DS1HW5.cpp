@@ -42,7 +42,7 @@ class File {
             int size = data.size();
             for ( int i = size - 1; i  > 0 ; i--) {
                 for ( int j = 0 ; j <= i -1; j++ ) {
-                    if ( data[j].graduateNum > data[j+1].graduateNum ) {
+                    if ( data[j].graduateNum < data[j+1].graduateNum ) {
                         //swapData( j, j+1 );
                         iter_swap( data.begin()+j, data.begin()+j+1);
                     }
@@ -55,7 +55,7 @@ class File {
             for ( int i = 0 ; i < size ; i++ ) {
                 int minIndex = i;
                 for ( int j = i + 1; j < size ; j++ ) {
-                    if ( data[j].graduateNum < data[minIndex].graduateNum ) {
+                    if ( data[j].graduateNum > data[minIndex].graduateNum ) {
                         minIndex = j;
                    }
                 }
@@ -88,7 +88,7 @@ class File {
             vector<Data> arr;
             while (  left.size() && right.size() ) {
                 Data pushbackElement ;
-                if (left[0].graduateNum < right[0].graduateNum) {
+                if (left[0].graduateNum > right[0].graduateNum) {
                     pushbackElement = left.at(0);
                     left.erase(left.begin());
                 } else {
@@ -121,7 +121,7 @@ class File {
         int partition(  int start,  int end ) {
             int pivot = data.at(end).graduateNum, i = start - 1;
             for ( int j = start; j < end; j++ ) {
-                if ( data[j].graduateNum< pivot ) {
+                if ( data[j].graduateNum > pivot ) {
                     i++;
                     //swapData(i,j);
                     iter_swap(data.begin()+i, data.begin()+j);
@@ -169,9 +169,9 @@ class File {
                 }
 
                 data.clear();
-                for ( int i = 0 ; i <= 9 ; i++ ) {
+                for ( int i = 9 ; i >= 0 ; i-- ) {
                     int sizeB =basins[i].arr.size();
-                    for ( int j = 0 ; j < sizeB ; j++ ) {
+                    for ( int j = sizeB - 1 ; j >= 0 ; j-- ) {
                         data.push_back( basins[i].arr[j]);      
                     }
 
