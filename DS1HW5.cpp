@@ -26,6 +26,9 @@ class File {
         void BuildAll(string name) {
             ifstream ifs(name);
             string line;
+            getline(ifs,line) ;
+            getline(ifs,line) ;
+            getline(ifs,line) ;
             while ( getline(ifs,line) ){
                 BuildOne(line);
             }
@@ -428,7 +431,7 @@ int main() {
                 clock_t end = clock();
                 for ( int i = 0 ; i<file.size();i++ ) 
                     ofs << file.data[i].line << endl;
-                cout << "Quicksort  " << (end-start)/CLOCKS_PER_SEC*1000 << "ms" << endl;
+                cout << "radix_sort  " << (end-start)/CLOCKS_PER_SEC*1000 << "ms" << endl;
                 ofs.close();
             } else {
                 cout << "\"input" << name << ".txt\" " << "Not Found!!" << endl;
