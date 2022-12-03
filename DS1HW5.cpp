@@ -201,8 +201,13 @@ class File {
 
             int head = i;
             while ( str[i] != '\t') i++;
-            Data putInData = {str, toNum(str.substr(head,i-head))};
-            data.push_back(putInData);
+            if ( head == i ) {
+                Data putInData = {str, 0 };
+            }
+            else {
+                Data putInData = {str, toNum(str.substr(head,i-head))};
+                data.push_back(putInData);
+            }
         }
 
 
