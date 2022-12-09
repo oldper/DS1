@@ -404,7 +404,7 @@ int main() {
                 file1.quickSortForMain();
                 clock_t end = clock();
                 for ( int i = 0 ; i<file1.size();i++ ) 
-                    ofs1 << file1.data[i].line << endl;
+                    ofs2 << file1.data[i].line << endl;
                 cout << "Quicksort  " << double(end-start)/CLOCKS_PER_SEC*1000 << "ms" << endl;
                 ofs1.close();
 
