@@ -181,6 +181,16 @@ class File {
         }
 
 
+        void compare( File file ) {
+            int size = data.size(), count = 0;
+            for ( int i = 0 ; i< size ; i++ ) {
+                if ( file.data[i].graduateNum == data[i].graduateNum ) {
+                    count++;
+                }
+            }
+
+            if ( count == size ) printf( "Ok" );
+        }
     private:
 /*
         void swapData( int i, int j ) {
@@ -265,190 +275,17 @@ class File {
 
 
 
-
-
-
-/*
-vector<int> mergeSort( vector<int> arr ) {
-    if ( arr.size() <= 1 ) {
-        return arr;
-    }
-    else {
-        int middle = (arr.size()) / 2;
-        vector<int> left = { arr.begin(), arr.begin()+middle};
-        vector<int> right = { arr.begin()+middle, arr.end()};
-        return merge( mergeSort(left), mergeSort(right));
-    }
-}
-int partition( vector<int> & arr, int start,  int end ) {
-    int pivot = arr.at(end), i = start - 1;
-    for ( int j = start; j < end; j++ ) {
-        if ( arr[j] < pivot ) {
-            i++;
-            int temp1 = arr[i], temp2 = arr[j];
-            arr.erase(arr.begin()+i);
-            arr.insert(arr.begin()+i, temp2);
-            arr.erase(arr.begin()+j);
-            arr.insert( arr.begin()+j, temp1);
-        }
-
-    }
-
-    i++;
-    int temp1 = arr[i], temp2 = arr[end];
-    arr.erase(arr.begin()+i);
-    arr.insert(arr.begin()+i, temp2);
-    arr.erase(arr.begin()+end);
-    arr.insert( arr.begin()+end, temp1);
-    return i;
-
-}
-
-void quickSort( vector<int> & arr, int start, int end) {
-    if ( start < end ) {
-        int pivot = partition(arr, start, end);
-        quickSort( arr, start, pivot - 1 );
-        quickSort( arr, pivot+1, end);
-    }
-}
-
-
-
-void radixSort( vector<int> &arr ) {
-    vector<Basin> basins;
-    for ( int i = 0 ; i <= 9 ; i++ ) {
-        Basin basin;
-        basin.num = i;
-        basins.push_back(basin);
-    }
-
-    int size = arr.size();
-    bool flag = true;
-    for ( int i = 0 ; flag ; i++ ) {
-        flag = false;
-        for ( int j = 0 ; j < size ; j++ ) {
-            int num = getNum( arr.at(j), i );
-            basins[num].arr.push_back( arr[j] );
-            if ( num != 0 ) flag = true;
-        }
-
-        arr.clear();
-        for ( int i = 0 ; i <= 9 ; i++ ) {
-            int sizeB =basins[i].arr.size();
-            for ( int j = 0 ; j < sizeB ; j++ ) {
-                arr.push_back( basins[i].arr[j]);      
-            }
-
-            basins[i].arr.clear();
-        }
-    }
-
-}
-
-*/
 int main() {
-    cout << "--------------------------------------------" << endl;
-    cout << "1. bubble and selection" << endl;
-    cout << "2. merge and quick" << endl;
-    cout << "3. radixSort" << endl;
-    cout << "--------------------------------------------" << endl;
+    string name1, name2;
+    cout << "name1" << endl;
+    cin >> name1;
+    cout << "name2" << endl;
+    cin >> name2;
+    File file1, file2;
+    file1.BuildAll(name1.c_str());
+    file2.BuildAll(name2.c_str());
 
-    string cmd ;
-    cin >> cmd;
-    while ( cmd != "0" ) {
-        if ( cmd == "1" ) {
-            string name;
-            cout << "enter file name( input501.txt -> 501" << endl; 
-            cin >> name; 
-            ifstream ifs("input"+ name + ".txt" );
-            if ( ifs.good() ) {
-                ifs.close();
-                File file1, file2;
-                file1.BuildAll("input"+name+".txt");
-                file2.BuildAll("input"+name+".txt");
-                ofstream ofs1("bubble_sort"+name+".txt");
-                clock_t start = clock();
-                file1.baubleSort();
-                clock_t end = clock();
-                for ( int i = 0 ; i<file1.size();i++ ) 
-                    ofs1 << file1.data[i].line << endl;
-                cout << "Bubblesort  " << double(end-start) / CLOCKS_PER_SEC*1000 << "ms" << endl;
-                ofs1.close();
-
-                ofstream ofs2("select_sort"+name+".txt");
-                start = clock();
-                file2.selectionSort();
-                end = clock();
-                for ( int i = 0 ; i<file1.size();i++ ) 
-                    ofs2 << file1.data[i].line << endl;
-                cout << "Selectionsort  " << double(end-start)/CLOCKS_PER_SEC*1000 << "ms" << endl;
-                ofs2.close();
-            } else {
-                cout << "\"input" << name << ".txt\" " << "Not Found!!" << endl;
-            }
-        }
-
-
-        else if ( cmd == "2" ) {
-            string name;
-            cout << "enter file name( input501.txt -> 501" << endl; 
-            cin >> name; 
-            ifstream ifs("input"+ name + ".txt" );
-            if ( ifs.good() ) {
-                ifs.close();
-                File file1, file2;
-                file1.BuildAll("input"+name+".txt");
-                file2.BuildAll("input"+name+".txt");
-                ofstream ofs1("quick_sort"+name+".txt");
-                clock_t start = clock();
-                file1.quickSortForMain();
-                clock_t end = clock();
-                for ( int i = 0 ; i<file1.size();i++ ) 
-                    ofs1 << file1.data[i].line << endl;
-                cout << "Quicksort  " << double(end-start)/CLOCKS_PER_SEC*1000 << "ms" << endl;
-                ofs1.close();
-
-                ofstream ofs2("merge_sort"+name+".txt");
-                start = clock();
-                file2.mergeSortForMain();
-                end = clock();
-                for ( int i = 0 ; i<file1.size();i++ ) 
-                    ofs2 << file1.data[i].line << endl;
-                cout << "Mergesort  " << double(end-start)/CLOCKS_PER_SEC*1000 << "ms" << endl;
-                ofs2.close();
-            } else {
-                cout << "\"input" << name << ".txt\" " << "Not Found!!" << endl;
-            }
-        }
-        
-        else if ( cmd == "3" ) {
-            string name;
-            cout << "enter file name( input501.txt -> 501" << endl; 
-            cin >> name;
-            ifstream ifs("input"+name+".txt");
-            if ( ifs.good() ) {
-                ifs.close();
-                File file;
-                file.BuildAll("input"+name+".txt");
-                ofstream ofs("radix_sort"+name+".txt");
-                clock_t start = clock();
-                file.quickSortForMain();
-                clock_t end = clock();
-                for ( int i = 0 ; i<file.size();i++ ) 
-                    ofs << file.data[i].line << endl;
-                cout << "radix_sort  " << (end-start)/CLOCKS_PER_SEC*1000 << "ms" << endl;
-                ofs.close();
-            } else {
-                cout << "\"input" << name << ".txt\" " << "Not Found!!" << endl;
-            }
-        }
-
-        else {
-            cout << "Error" << endl;
-        }
-
-        cout << "Enter cmd" << endl;
-        cin >> cmd;
-    }
-    return 0;
+    file1.compare(file2);
+    cout << "end";
+    cin >> name1;
 }
