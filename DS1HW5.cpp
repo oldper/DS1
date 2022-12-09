@@ -380,7 +380,7 @@ int main() {
                 file2.selectionSort();
                 end = clock();
                 for ( int i = 0 ; i<file1.size();i++ ) 
-                    ofs1 << file1.data[i].line << endl;
+                    ofs2 << file1.data[i].line << endl;
                 cout << "Selectionsort  " << double(end-start)/CLOCKS_PER_SEC*1000 << "ms" << endl;
                 ofs2.close();
             } else {
