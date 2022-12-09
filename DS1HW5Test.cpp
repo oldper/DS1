@@ -286,6 +286,5 @@ int main() {
     file2.BuildAll(name2.c_str());
 
     file1.compare(file2);
-    cout << "end";
-    cin >> name1;
+    
 }
